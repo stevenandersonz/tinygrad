@@ -73,6 +73,7 @@ def get_run_onnx(onnx_model: ModelProto):
     if DEBUG >= 1:
       print("realize", inp.name)
     tensors[inp.name].realize()
+
   # preparse the attributes
   attribute_dict = {}
   for num,n in enumerate(onnx_model.graph.node):
@@ -85,6 +86,7 @@ def get_run_onnx(onnx_model: ModelProto):
     input_tensors = {}
     intermediate_tensors = {}
     output_tensor_names = [x.name for x in onnx_model.graph.output]
+
     # get inputs
     for inp in onnx_model.graph.input:
       if inp.name in tensors: continue

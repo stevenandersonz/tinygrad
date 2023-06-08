@@ -70,12 +70,6 @@ backend_test.exclude('test_matmulinteger_*')
 backend_test.exclude('test_reduce_log_sum_exp_*')
 backend_test.exclude('test_operator_add_*')
 
-
-
-
-
-
-
 # we don't support rounding
 backend_test.exclude('test_round_*')
 backend_test.exclude('test_ceil_*')
