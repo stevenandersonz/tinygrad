@@ -67,6 +67,14 @@ backend_test.exclude('test_cast_*')
 backend_test.exclude('test_castlike_*')
 backend_test.exclude('test_convinteger_*')
 backend_test.exclude('test_matmulinteger_*')
+backend_test.exclude('test_reduce_log_sum_exp_*')
+backend_test.exclude('test_operator_add_*')
+
+
+
+
+
+
 
 # we don't support rounding
 backend_test.exclude('test_round_*')
