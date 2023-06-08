@@ -159,9 +159,7 @@ class Tensor:
   def eye(dim, **kwargs): return Tensor([1], **kwargs).slice(((0,dim+1),)).reshape(1, dim+1).expand(dim, dim+1).reshape(dim*(dim+1)).slice(((0,dim*dim),)).reshape(dim, dim)
 
   def where(self:Tensor, input_:Union[Tensor, float], other:Union[Tensor, float]):
-    if not isinstance(input_, Tensor): input_ = Tensor(input_)
-    if not isinstance(other, Tensor): other = Tensor(other)
-    cond = (self != 0.0).cast(input_.dtype if input_.dtype >= other.dtype else other.dtype)
+    cond = (self != 0.0)
     return cond * input_ + (1.0 - cond) * other
 
   # ***** rng hlops *****
