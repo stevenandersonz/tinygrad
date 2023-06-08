@@ -63,6 +63,7 @@ class ImageDType(DType):
     self.shape: Tuple[int, ...] = shape  # arbitrary arg for the dtype, used in image for the shape
     super().__init__()
   def __repr__(self): return f"dtypes.{self.name}({self.shape})"
+  def __ge__(self, x): self.priority >= x.priority
 
 @dataclass
 class dtypes:
