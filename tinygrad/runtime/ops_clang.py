@@ -1,6 +1,6 @@
 import os, time, ctypes, hashlib, subprocess, platform, tempfile
 from tinygrad.ops import Compiled
-from tinygrad.helpers import fromimport, getenv, DEBUG
+from tinygrad.helpers import fromimport, getenv, DEBUG, CI
 from tinygrad.runtime.lib import RawMallocBuffer
 from tinygrad.codegen.cstyle import CStyleCodegen, CStyleLanguage
 
@@ -23,6 +23,25 @@ class ClangProgram:
       if DEBUG >= 5: print(prg)
       if getenv('ARM64'):
         subprocess.check_output(args=('as -arch arm64 -o '+fn+'.o').split(), input=prg.encode('utf-8'))
+        if CI:
+          wrapper_code = """
+          #include <dlfcn.h>
+
+          typedef void (*func_type)(/* parameters here */);
+
+          int main() {
+              void *handle = dlopen("{library_path}", RTLD_LAZY);
+              func_type func = (func_type) dlsym(handle, "{function_name}");
+              func(/* parameters here */);
+              dlclose(handle);
+              return 0;
+          }
+          """.format(library_path=fn, function_name=name)
+        subprocess.check_output(args=('clang -lm -O2 -Wall -shared '+fn+'.o -o'+fn).split())
+    #subprocess.check_output("arm-linux-gnueabihf-gcc -o wrapper wrapper.c -ldl".split())
+
+# Execute the function in QEMU.
+      else:
         subprocess.check_output(args=('clang -lm -O2 -Wall -shared '+fn+'.o -o'+fn).split())
     self.lib = ctypes.CDLL(fn)
     self.fxn = self.lib[name]
