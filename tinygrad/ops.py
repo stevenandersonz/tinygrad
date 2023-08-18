@@ -196,7 +196,9 @@ class Compiled:
     def get_program():
       from tinygrad.codegen.optimizer import kernel_optimize, hand_coded_optimizations
       if getenv("KOPT"): kernel_optimize(k, lambda: Linearizer(ast, output, self.linearizer_opts), self.to_program)
-      elif not getenv("NOOPT"): hand_coded_optimizations(k)
+      elif not getenv("NOOPT"):
+        print(k)
+        hand_coded_optimizations(k)
       return self.to_program(k)
 
     if hasattr(k, 'key') and getenv("ENABLE_METHOD_CACHE", 1):

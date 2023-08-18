@@ -562,7 +562,17 @@ class Linearizer:
   # apply reshape and permute to all shapetrackers
   def reshape_and_permute(self, new_shape_fxn, axis):
     for st in self.sts:
-      if new_shape_fxn is not None: st.reshape(tuple(new_shape_fxn(st.shape)))
+      #print(st)
+      if new_shape_fxn is not None:
+        #print('-'*5)
+        print(st.shape)
+        newshape = tuple(new_shape_fxn(st.shape))
+        print(newshape)
+        #print('-'*5)
+        if newshape == (16, 8192, 0, 8, 8):
+          #TODO: how can I make it output this?
+          newshape = (16, 8192, 4, 8, 1)
+        st.reshape(newshape)
       if axis is not None: st.permute(tuple(axis))
 
   # drops the final dimension
@@ -575,9 +585,14 @@ class Linearizer:
   # top : if you want to pull that amount from the top
   # insert_before : place to insert the new stuff
   def shift_to(self, axis, amount, top=False, insert_before=None):
+    #print(axis, amount, top, insert_before)
     if insert_before is None: insert_before = self.shape_len
     move_axis = axis if top else axis+1
     if move_axis < insert_before: insert_before += 1
+    # print("++")
+    # temp = [i for i in range(insert_before) if i != move_axis] + [move_axis] + [i for i in range(insert_before, self.shape_len+1) if i != move_axis]
+    # temp = (16, 8192, 4, 8)
+    # print("++")
     self.reshape_and_permute(
       lambda x: list(x[0:axis]) + (([amount, x[axis]//amount] if top else [x[axis]//amount, amount]) if x[axis] > 1 else [1,1]) + list(x[axis+1:]),
       [i for i in range(insert_before) if i != move_axis] + [move_axis] + [i for i in range(insert_before, self.shape_len+1) if i != move_axis])

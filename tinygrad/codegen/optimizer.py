@@ -130,9 +130,10 @@ def hand_coded_optimizations(k:Linearizer):
       k.upcast()
 
       # 2 locals
+      #NOTE: this calls to reshape a produce the error
+      print(s1)
       k.shift_to(s1, 8, insert_before=k.first_reduce)  # axis 2
       k.shift_to(s0, 8, insert_before=k.first_reduce)  # axis 3
-
       # permuted+upcast for tensor cores
       k.shift_to(global_count, 4, insert_before=k.first_reduce)
       k.shift_to(global_count+1, 4, insert_before=k.first_reduce)
@@ -158,7 +159,6 @@ def hand_coded_optimizations(k:Linearizer):
         k.shift_to(s0, 2, insert_before=k.first_reduce-k.local_dims)
         k.local_dims += 1
         k.exclude_local_upcast += 1
-
       # early exit
       return
 
