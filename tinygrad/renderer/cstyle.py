@@ -72,7 +72,7 @@ class CStyleLanguage(NamedTuple):
     return f"for (int {expr} = {_min}; {expr} <= {_max}; ++{expr}) {{"
 
   def render_conditional(self, cond: str, x:str, y:str) -> str:
-    return f"({cond})?({x}):{y}"
+    return f"({cond})?(float)({x}):{y}"
 
   def render_kernel(self, function_name:str, kernel:List[str], bufs:List[Tuple[str,DType]], local_size:List[int], prekernel:List[str]) -> str:
     tmp = "const sampler_t smp = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP | CLK_FILTER_NEAREST;\n" if any(isinstance(dtype, ImageDType) for _,dtype in bufs) else ""
